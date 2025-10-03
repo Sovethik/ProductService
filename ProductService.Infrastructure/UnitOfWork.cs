@@ -18,7 +18,17 @@ namespace ProductService.Infrastructure
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return await _contextDb.SaveChangesAsync(cancellationToken);
+            int countSaveRows = 0;
+            try
+            {
+                countSaveRows = await _contextDb.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return countSaveRows;
         }
     }
 }

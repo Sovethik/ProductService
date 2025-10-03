@@ -11,15 +11,13 @@ namespace ProductService.Tests.IntegrationTest.ProductTest
 {
     public class IntegrationTestGetProdutcById : EnvironmentTestHttpClient
     {
-        public IntegrationTestGetProdutcById (WebApplicationFactory<Program> factory) : base(factory)
-        {
-
-        }
+        public IntegrationTestGetProdutcById (WebApplicationFactory<Program> factory)
+            : base(factory) { }
 
         private string endPoint = "/api/product/";
 
         [Fact]
-        public async Task GetProductById_WhenProductFound()
+        public async Task GetProductById_WhenProductExist_ReturnOk()
         {
             //Arrange
             var request = 1;
@@ -32,11 +30,13 @@ namespace ProductService.Tests.IntegrationTest.ProductTest
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(content);
+            Assert.Equal(request, content.Id);
+            
 
         }
 
         [Fact]
-        public async Task GetProductDbyId_WhenProductNotFound()
+        public async Task GetProductDbyId_WhenProductDoesNotExist_ReturnNotFound()
         {
             //Arrange
             var request = 101;

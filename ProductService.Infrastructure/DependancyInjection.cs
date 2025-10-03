@@ -13,21 +13,15 @@ namespace ProductService.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration cfg,
             IHostEnvironment environment)
         {
-            if (!environment.IsEnvironment("Test"))
-            {
-                var connectionString = cfg.GetConnectionString("Default");
+           
+           var connectionString = cfg.GetConnectionString("Default");
 
-                services.AddDbContext<ProductServiceDb>(options =>
-                    options.UseNpgsql(connectionString)
-                    .LogTo(Console.WriteLine, LogLevel.Information)
-                    .EnableSensitiveDataLogging());
-            }
-            else
-            {
-                services.AddDbContext<ProductServiceDb>(options =>
-                       options.UseInMemoryDatabase("TestDb"));
-            }
-
+           services.AddDbContext<ProductServiceDb>(options =>
+               options.UseNpgsql(connectionString)
+               .LogTo(Console.WriteLine, LogLevel.Information)
+               .EnableSensitiveDataLogging());
+           
+           
             services.AddScoped<IProductServiceDb, ProductServiceDb>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
