@@ -11,31 +11,33 @@ using System.Threading.Tasks;
 
 namespace ProductService.Tests.UnitTest.Common
 {
-    public class TestHandlerBase<TLogger> /*: IDisposable*/
+    public class TestHandlerBase<TLogger> : IDisposable
         where TLogger : class
     {
         protected readonly ProductServiceDb contextDb;
         protected readonly Mock<ILogger<TLogger>> mockLogger;
         protected readonly CancellationToken сancellationToken;
-
+        private string _nameDataBase;
 
         public TestHandlerBase()
         {
+            _nameDataBase = GetType().Name;
             mockLogger = new Mock<ILogger<TLogger>>();
-            contextDb = ProductServiceContextFactory.Create();
+            contextDb = ProductServiceContextFactory.Create(_nameDataBase);
             сancellationToken = CancellationToken.None;
         }
 
-        public async Task<Product> AddTestDataInDataBaseAndReturnData()
+        public async Task AddTestDataInDataBaseAndReturnData()
         {
+
+            var contextToSaveData = ProductServiceContextFactory.Create(_nameDataBase);
+
             Category category = new Category()
             {
-                Id = 1,
                 TypeCategory = "TestCategory"
             };
 
-            contextDb.Categories.Add(category);
-            await contextDb.SaveChangesAsync();
+            contextToSaveData.Categories.Add(category);
 
             Product product = new Product()
             {
@@ -44,15 +46,18 @@ namespace ProductService.Tests.UnitTest.Common
                 Description = "TestDescription",
                 CategoryId = 1
             };
-            await contextDb.SaveChangesAsync();
 
-            return product;
+            contextToSaveData.Products.Add(product);
+
+        
+            await contextToSaveData.SaveChangesAsync();
+
         }
 
-        //public void Dispose()
-        //{
-        //    contextDb.Database.EnsureDeleted();
-        //    contextDb.Dispose();
-        //}
+        public void Dispose()
+        {
+            contextDb.Database.EnsureDeleted();
+            contextDb.Dispose();
+        }
     }
 }

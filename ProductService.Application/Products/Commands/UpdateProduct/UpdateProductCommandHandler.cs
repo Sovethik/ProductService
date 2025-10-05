@@ -37,7 +37,10 @@ namespace ProductService.Application.Products.Commands.UpdateProduct
                 CategoryId = request.CategoryId
             };
 
-            _contextDb.Products.Update(product);
+           
+             _contextDb.Products.Update(product);
+            
+           
 
             await _contextDb.SaveChangesAsync(cancellationToken);
 

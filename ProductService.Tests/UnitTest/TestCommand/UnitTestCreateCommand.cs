@@ -14,6 +14,8 @@ namespace ProductService.Tests.UnitTest.TestCommand
         [Fact]
         public async Task CreateCommandHandler_WhenProductExist_ReturnId()
         {
+            await AddTestDataInDataBaseAndReturnData();
+
             //Arrange
             var command = new CreateProductCommand()
             {
@@ -28,7 +30,7 @@ namespace ProductService.Tests.UnitTest.TestCommand
             //Act
             var result = await handlerCommand.Handle(command, сancellationToken);
 
-            var createdProduct = await contextDb.Products.FirstOrDefaultAsync(x => 
+            var createdProduct = await contextDb.Products.FirstOrDefaultAsync(x =>
             x.Id == result
             && x.Name == command.Name
             && x.Description == command.Description
@@ -37,7 +39,7 @@ namespace ProductService.Tests.UnitTest.TestCommand
             //Assert
             Assert.Equal(createdProduct.Id, result);
             Assert.NotNull(createdProduct);
-            
+
         }
     }
 }

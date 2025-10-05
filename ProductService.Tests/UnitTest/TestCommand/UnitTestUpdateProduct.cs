@@ -12,25 +12,22 @@ namespace ProductService.Tests.UnitTest.TestCommand
         public async Task UpdateCommandHandler_WhenProductExist()
         {
             //Arrange
-            var product = await AddTestDataInDataBaseAndReturnData();
+            await AddTestDataInDataBaseAndReturnData();
 
             var command = new UpdateProductCommand()
             {
-                Id = product.Id,
+                Id = 1,
                 Name = "TestNewName",
                 Description = "TestNewDescription",
                 Price = 5000,
-                CategoryId = product.CategoryId
+                CategoryId = 1
             };
-
-
             var handlerCommand = new UpdateProductCommandHandler(contextDb, mockLogger.Object);
             //Act
             await handlerCommand.Handle(command, сancellationToken);
 
 
-
-            var updatedProduct = await contextDb.Products.FirstOrDefaultAsync(p => 
+            var updatedProduct = await contextDb.Products.AsNoTracking().FirstOrDefaultAsync(p => 
             p.Id == command.Id
             && p.Name == command.Name
             && p.Description == command.Description
