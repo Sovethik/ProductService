@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using ProductService.Application.Common.Exceptions;
 using ProductService.Application.Interfaces;
 using ProductService.Application.Products.Querys.QueryGetAll;
 using ProductService.Domain.Entity;
@@ -9,19 +11,35 @@ namespace ProductService.Application.Products.Querys.QueryGetPage
 
     public class GetPageProductsQueryHandler : IRequestHandler<GetPageProductsQuery, IEnumerable<ProductDto>>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IProductServiceDb _contextDb;
         private readonly IMapper _mapper;
 
-        public GetPageProductsQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetPageProductsQueryHandler(IProductServiceDb contextDb, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _contextDb = contextDb;
             _mapper = mapper;
         }
 
 
         public async Task<IEnumerable<ProductDto>> Handle(GetPageProductsQuery request, CancellationToken cancellationToken)
         {
-           var pageProducts = await _unitOfWork.Products.GetPage(request.NumberPage);
+
+            var sizePage = 20;
+            var numberPage = request.NumberPage;
+
+            if (numberPage <= 0)
+                throw new NotFoundException($"list of {nameof(Product)}", $"number page {numberPage}");
+
+            var pageProducts = await _contextDb.Products
+                    .Include(p => p.Category)
+                    .AsNoTracking()
+                    .OrderBy(p => p.Id)
+                    .Skip((numberPage - 1) * sizePage)
+                    .Take(sizePage)
+                    .ToListAsync();
+
+            if (pageProducts == null || pageProducts.Count == 0)
+                throw new NotFoundException($"list of {nameof(Product)}", $"number page {numberPage}");
 
             var dto = _mapper.Map<IEnumerable<ProductDto>>(pageProducts);
 

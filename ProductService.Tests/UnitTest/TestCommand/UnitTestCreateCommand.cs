@@ -1,21 +1,20 @@
-﻿using Moq;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using ProductService.Application.Interfaces;
 using ProductService.Application.Products.Commands.CreateProduct;
 using ProductService.Domain.Entity;
+using ProductService.Tests.UnitTest.Common;
 
 
 namespace ProductService.Tests.UnitTest.TestCommand
 {
-    public class UnitTestCreateCommand
+    public class UnitTestCreateCommand : TestHandlerBase<CreateProductCommandHandler>
     {
         [Fact]
-        public async Task Test_CreateCommandHandler_WhenProductExist()
+        public async Task CreateCommandHandler_WhenProductExist_ReturnId()
         {
             //Arrange
-            var unitOfWork = new Mock<IUnitOfWork>();
-
-            var handlerCommand = new CreateProductCommandHandler(unitOfWork.Object);
-
             var command = new CreateProductCommand()
             {
                 Name = "Клавиатура",
@@ -24,20 +23,21 @@ namespace ProductService.Tests.UnitTest.TestCommand
                 CategoryId = 1
             };
 
-            CancellationToken cancellationToken = CancellationToken.None;
+            var handlerCommand = new CreateProductCommandHandler(contextDb, mockLogger.Object);
 
-            unitOfWork.Setup(u => u.Products.AddAsync(It.IsAny<Product>()))
-                .Callback<Product>(product => product.Id = 1)
-                .Returns(Task.CompletedTask);
-            unitOfWork.Setup(u => u.SaveChangesAsync(cancellationToken))
-                .ReturnsAsync(1);
-                
             //Act
-            var result = await handlerCommand.Handle(command, cancellationToken);
+            var result = await handlerCommand.Handle(command, сancellationToken);
 
+            var createdProduct = await contextDb.Products.FirstOrDefaultAsync(x => 
+            x.Id == result
+            && x.Name == command.Name
+            && x.Description == command.Description
+            && x.CategoryId == command.CategoryId);
 
             //Assert
-            Assert.Equal(1, result);
+            Assert.Equal(createdProduct.Id, result);
+            Assert.NotNull(createdProduct);
+            
         }
     }
 }

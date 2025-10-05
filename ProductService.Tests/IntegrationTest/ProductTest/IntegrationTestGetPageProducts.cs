@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using ProductService.Application.Products.Commands.CreateProduct;
 using ProductService.Application.Products.Querys.QueryGetPage;
+using ProductService.Tests.IntegrationTest.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;

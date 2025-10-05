@@ -1,15 +1,13 @@
-
-using Microsoft.AspNetCore.Hosting;
 using ProductService.Application;
 using ProductService.Infrastructure;
+using ProductService.Infrastructure.Logging.Enricher.Error;
 using ProductService.Presentation;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -26,11 +24,20 @@ builder.Services.AddCors(options =>
     });
 });
 
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.WithProperty("AppName", "ProductService")
+    .Enrich.With<DatabaseErrorEnricher>()
+    .Enrich.FromLogContext()
+    .WriteTo.Seq("http://localhost:5341")
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 app.UseCustomExceptionsHandler();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

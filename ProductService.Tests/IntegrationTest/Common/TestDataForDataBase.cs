@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProductService.Tests.IntegrationTest
+namespace ProductService.Tests.IntegrationTest.Common
 {
     public static class TestDataForDataBase
     {

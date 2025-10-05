@@ -16,14 +16,11 @@ namespace ProductService.Infrastructure
            
            var connectionString = cfg.GetConnectionString("Default");
 
-           services.AddDbContext<ProductServiceDb>(options =>
-               options.UseNpgsql(connectionString)
-               .LogTo(Console.WriteLine, LogLevel.Information)
-               .EnableSensitiveDataLogging());
-           
+            services.AddDbContext<ProductServiceDb>(options =>
+                options.UseNpgsql(connectionString));
+               
            
             services.AddScoped<IProductServiceDb, ProductServiceDb>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

@@ -7,7 +7,7 @@ using ProductService.Infrastructure.DataBases;
 using System;
 using System.Net.Http.Json;
 
-namespace ProductService.Tests.IntegrationTest
+namespace ProductService.Tests.IntegrationTest.Common
 {
     public class EnvironmentTestHttpClient : IClassFixture<WebApplicationFactory<Program>>
     {

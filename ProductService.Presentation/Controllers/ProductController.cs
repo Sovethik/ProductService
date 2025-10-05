@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.Products.Commands.CreateProduct;
+using ProductService.Application.Products.Commands.DeleteProduct;
+using ProductService.Application.Products.Commands.UpdateProduct;
 using ProductService.Application.Products.Querys.QueryGetAll;
 using ProductService.Application.Products.Querys.QueryGetPage;
 using ProductService.Application.Products.Querys.QuerysGetById;
@@ -33,16 +35,37 @@ namespace ProductService.Presentation.Controllers
         {
             GetByIdProductQuery query = new GetByIdProductQuery() { Id = id };
             var result = await _mediator.Send(query);
-            
+
             return Ok(result);
         }
 
-        [HttpPost(Name = "CreateProduct")]
-        public async Task<ActionResult<int>> CreateProductAsync(CreateProductCommand product)
+        [HttpPost]
+        public async Task<ActionResult<int>> CreateProductAsync([FromBody] CreateProductCommand product)
         {
             var result = await _mediator.Send(product);
 
             return Ok(result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProductAsync(int id, [FromBody] UpdateProductCommand updateProductCommand)
+        {
+            updateProductCommand.Id = id;
+
+            await _mediator.Send(updateProductCommand);
+
+            return NoContent();
+
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProductAsync(int id)
+        {
+            DeleteProductCommand deleteProductCommand = new DeleteProductCommand() { Id = id };
+
+            await _mediator.Send(deleteProductCommand);
+
+            return NoContent();
         }
     }
 }

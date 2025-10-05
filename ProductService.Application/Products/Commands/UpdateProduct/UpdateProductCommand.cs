@@ -1,10 +1,11 @@
 ﻿using MediatR;
-using System.ComponentModel.DataAnnotations;
 
-namespace ProductService.Application.Products.Commands.CreateProduct
+namespace ProductService.Application.Products.Commands.UpdateProduct
 {
-    public class CreateProductCommand : IRequest<int>
+    public class UpdateProductCommand : IRequest<Unit>
     {
+        public int Id { get; set; }
+
         public string Name { get; set; }
 
         public decimal Price { get; set; }

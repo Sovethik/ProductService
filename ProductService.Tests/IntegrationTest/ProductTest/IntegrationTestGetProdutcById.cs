@@ -3,6 +3,7 @@ using ProductService.Application.Interfaces;
 using ProductService.Application.Products.Commands.CreateProduct;
 using ProductService.Application.Products.Querys.QuerysGetById;
 using ProductService.Infrastructure.DataBases;
+using ProductService.Tests.IntegrationTest.Common;
 using System.Net;
 using System.Net.Http.Json;
 
